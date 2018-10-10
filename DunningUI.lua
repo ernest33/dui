@@ -707,7 +707,6 @@ local function SetAutoSell()
 end
 
 --Set ItemDestroyerButton
-local function ItemDestroyerButton()
 for i=1, STATICPOPUP_NUMDIALOGS do
 	local e = _G["StaticPopup"..i.."EditBox"];
 	local f = CreateFrame("Button", "$parentDelete", e, "StaticPopupButtonTemplate");
@@ -724,7 +723,7 @@ for i=1, STATICPOPUP_NUMDIALOGS do
 	end
  end)
 end
-end
+
 
 --Set align
 SLASH_EA1 = "/align"
