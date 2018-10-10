@@ -784,15 +784,15 @@ end
 local function SetURLCopy()
     for _, name in pairs({"CHAT_MSG_SAY", "CHAT_MSG_WHISPER", "CHAT_MSG_YELL", "CHAT_MSG_GUILD", "CHAT_MSG_OFFICER", "GUILD_MOTD", "CHAT_MSG_BN_WHISPER", "CHAT_MSG_BN_CONVERSATION", "CHAT_MSG_BN_INLINE_TOAST_BROADCAST", "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_RAID", "CHAT_MSG_RAID_LEADER", "CHAT_MSG_INSTANCE_CHAT", "CHAT_MSG_INSTANCE_CHAT_LEADER", "CHAT_MSG_CHANNEL"}) do
         ChatFrame_AddMessageEventFilter(name, function(_, _, msg, ...)
-                local newMsg, found = gsub(msg, "[^ \"£%^`¨{}%[%]\\|<>]+[^ '%-=%./,\"£%^`¨{}%[%]\\|<>%d]%.[^ '%-=%./,\"£%^`¨{}%[%]\\|<>%d][^ \"£%^`¨{}%[%]\\|<>]+", "|cff9999ff|Hurzurl~%1|h[%1]|h|r");
+                local newMsg, found = gsub(msg, "[^ \"£%^`¨{}%[%]\\|<>]+[^ '%-=%./,\"£%^`¨{}%[%]\\|<>%d]%.[^ '%-=%./,\"£%^`¨{}%[%]\\|<>%d][^ \"£%^`¨{}%[%]\\|<>]+", "|cff9999ff|Hdunurl~%1|h[%1]|h|r");
                 if ( found > 0 ) then
                     return false, newMsg, ...;
                 end
-                newMsg, found = gsub(msg, "^%x+[%.:]%x+[%.:]%x+[%.:]%x+[^ \"£%^`¨{}%[%]\\|<>]*", "|cff9999ff|Hurzurl~%1|h[%1]|h|r");
+                newMsg, found = gsub(msg, "^%x+[%.:]%x+[%.:]%x+[%.:]%x+[^ \"£%^`¨{}%[%]\\|<>]*", "|cff9999ff|Hdunurl~%1|h[%1]|h|r");
                 if ( found > 0 ) then
                     return false, newMsg, ...;
                 end
-                newMsg, found = gsub(msg, " %x+[%.:]%x+[%.:]%x+[%.:]%x+[^ \"£%^`¨{}%[%]\\|<>]*", "|cff9999ff|Hurzurl~%1|h[%1]|h|r");
+                newMsg, found = gsub(msg, " %x+[%.:]%x+[%.:]%x+[%.:]%x+[^ \"£%^`¨{}%[%]\\|<>]*", "|cff9999ff|Hdunurl~%1|h[%1]|h|r");
                 if ( found > 0 ) then
                     return false, newMsg, ...;
                 end
@@ -801,7 +801,7 @@ local function SetURLCopy()
     local old = ItemRefTooltip.SetHyperlink;
     function ItemRefTooltip:SetHyperlink(data, ...)
         local isURL, link = strsplit("~", data);
-        if (( isURL ) and ( isURL == "Dunningurl" )) then
+        if (( isURL ) and ( isURL == "dunurl" )) then
             local activeWindow = ChatEdit_GetActiveWindow();
             if ( activeWindow ) then
                 activeWindow:SetText(link);
