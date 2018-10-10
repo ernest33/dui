@@ -1164,7 +1164,7 @@ function SlashCmdList.COORDINATES(msg)
 			DEFAULT_CHAT_FRAME:AddMessage(color.."Coordinates: Mini map coordinates enabled")
 		end
 	else
-		DEFAULT_CHAT_FRAME:AddMessage(color.."Coordinates by Szandos")
+		DEFAULT_CHAT_FRAME:AddMessage(color.."Coordinates by Dunning")
 		DEFAULT_CHAT_FRAME:AddMessage(color.."Version: "..GetAddOnMetadata("Coordinates", "Version"))
 		DEFAULT_CHAT_FRAME:AddMessage(color.."Usage:")
 		DEFAULT_CHAT_FRAME:AddMessage(color.."/coordinates worldmap - Enable/disable coordinates on the world map")
@@ -1371,7 +1371,7 @@ local function SetOptionsframe()
         [5] = {x = 24, y = 50+35*4, Text = "자동 흰색 아이템 판매"},
         [8] = {x = 24, y = 50+35*5, Text = "자동 퀘스트 받기"},
         [9] = {x = 24, y = 60+35*6, Text = "빠른 자동 룻"},
-        [7] = {x = 24, y = 70+35*7, Text = "전투중 상호작용"},
+        [7] = {x = 24, y = 70+35*7, Text = "전투중 마우스 클릭 상호작용 방지"},
         [1] = {x = 24, y = 130+35*8, Text = "네임 플레이트"},
         [10] = {x = 174, y = 130+35*8, Text = "미니맵"},
         [14] = {x = 324, y = 130+35*8, Text = "채팅"},
@@ -1420,7 +1420,7 @@ local function SetOptionsframe()
     text3:SetText("옵션 설정");
     text4:SetText("인터페이스 사용자설정");
     text5:SetText("모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다.");
-    text6:SetText("전투중 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다.");
+    text6:SetText("전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다.");
     text7:SetText("일시적으로 시프트 키를 누른효과를 적용합니다");
     text8:SetText("자동 루팅시 아이템 창을 표시하지 않습니다");
     text6:SetJustifyH("LEFT");
