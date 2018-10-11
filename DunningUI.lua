@@ -295,7 +295,7 @@ local function SetMinimap()
     end);
     GarrisonLandingPageMinimapButton:SetScale(1.0);
     GarrisonLandingPageMinimapButton.LoopingGlow:SetScale(0.7);
-    Move(GarrisonLandingPageMinimapButton, "TOPLEFT", MinimapBackdrop, "TOPLEFT", 30, -109);
+    Move(GarrisonLandingPageMinimapButton, "TOPLEFT", MinimapBackdrop, "TOPLEFT", 35, -109);
     local function setup()
         if ( not UnitAffectingCombat("player") ) then
             if (( OrderHallCommandBar ) and ( OrderHallCommandBar:IsShown() )) then
@@ -1352,6 +1352,61 @@ local function SetMisc()
     end
     DunningMapFrame:SetScript("OnUpdate", DunningMapFrame_OnUpdate);
 end
+
+--Set ClassColor
+local function colour(statusbar, unit) --Create unitisplayer class color
+        local _, class, c
+        if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
+                _, class = UnitClass(unit)
+                c = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+                statusbar:SetStatusBarColor(c.r, c.g, c.b)        end
+end
+hooksecurefunc("UnitFrameHealthBar_Update", colour)
+hooksecurefunc("HealthBar_OnValueChanged", function(self)
+        colour(self, self.unit)
+end)
+local frame = CreateFrame("FRAME")
+frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+frame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+frame:RegisterEvent("UNIT_FACTION")
+local function eventHandler(self, event, ...)
+    if UnitIsPlayer("target") then
+        c = RAID_CLASS_COLORS[select(2, UnitClass("target"))]
+        TargetFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
+    end
+    if UnitIsPlayer("focus") then
+        c = RAID_CLASS_COLORS[select(2, UnitClass("focus"))]
+        FocusFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
+    end
+    if PlayerFrame:IsShown() and not PlayerFrame.bg then
+        c = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
+        bg=PlayerFrame:CreateTexture()
+        bg:SetPoint("TOPLEFT",PlayerFrameBackground)
+        bg:SetPoint("BOTTOMRIGHT",PlayerFrameBackground,0,22)
+        bg:SetTexture(TargetFrameNameBackground:GetTexture())
+        bg:SetVertexColor(c.r,c.g,c.b)
+        PlayerFrame.bg=true
+    end
+end
+frame:SetScript("OnEvent", eventHandler)
+hooksecurefunc("HealthBar_OnValueChanged", function (self) --Create healthBar class color
+	if UnitIsPlayer(self.unit) then
+		local c = RAID_CLASS_COLORS[select(2,UnitClass(self.unit))];
+		if c then
+			self:SetStatusBarColor(c.r, c.g, c.b)
+		end
+	end
+end);
+
+hooksecurefunc("UnitFrameHealthBar_Update", function (self) --Create unit frame health bar class color
+	if UnitIsPlayer(self.unit) then
+		local c = RAID_CLASS_COLORS[select(2,UnitClass(self.unit))];
+		if c then
+			self:SetStatusBarColor(c.r, c.g, c.b)
+		end
+	end
+end);
 
 --SetOptionsframe
 local function SetOptionsframe()
