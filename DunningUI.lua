@@ -1296,7 +1296,7 @@ local function SetMisc()
             local gold = floor(abs(totalmoney / 10000));
             local silver = floor(abs(mod(totalmoney / 100, 100)));
             local copper = floor(abs(mod(totalmoney, 100)));
-            local msg = format("Received %d Gold, %d Silver, %d Copper from the mail.", gold, silver, copper);
+            local msg = format("우편을 통해 %d 골드, %d 실버, %d 코퍼를 받았습니다.", gold, silver, copper);
             DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 0);
             totalmoney = 0;
         end
