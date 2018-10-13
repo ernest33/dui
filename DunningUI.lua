@@ -52,8 +52,8 @@ local function SetNameplates()
     end);
     hooksecurefunc("CompactUnitFrame_UpdateName", function(frame)
             frame.name:SetText(GetUnitName(frame.unit, true));
-            frame.name:Show();
-    end);
+            frame.name:Hide();		
+	end);
     local function setup(frame)
         local isTanking = UnitDetailedThreatSituation("player", frame.displayedUnit);
         if ( not isTanking ) then
@@ -1352,6 +1352,16 @@ local function SetMisc()
     end
     DunningMapFrame:SetScript("OnUpdate", DunningMapFrame_OnUpdate);
 end
+
+--Set fix unit frame position
+PlayerFrame:SetPoint("TOPLEFT", UIParent,"TOPLEFT", -220,33) -- Set player frame x, y position revised
+PlayerFrame:SetScale(1.0)                                    -- Adjust player frame size rate
+
+TargetFrame:SetPoint("TOPLEFT", UIParent,"TOPLEFT", -320,13) --Set target frame position revised
+TargetFrame:SetScale(1.0)                                    --Adjust target frame size rate
+
+FocusFrame:SetPoint("TOPLEFT", UIParent,"TOPLEFT", 133,-13)  --Set focus frame position revised
+FocusFrame:SetScale(1.0)                                     --Adjust focus frame size rate
 
 --Set ClassColor
 local function colour(statusbar, unit) --Create unitisplayer class color
