@@ -350,6 +350,9 @@ local function HideBags()
     end
 end
 
+--Set Sticky RAID WARNING
+ChatTypeinfo.RAID_WARNING.sticky=1
+
 --Set HideRightBar
 local buttons = {
 	MultiBarRightButton1,
