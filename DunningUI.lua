@@ -52,7 +52,7 @@ local function SetNameplates()
     end);
     hooksecurefunc("CompactUnitFrame_UpdateName", function(frame)
             frame.name:SetText(GetUnitName(frame.unit, true));
-            frame.name:Hide();		
+            frame.name:Show();		
 	end);
     local function setup(frame)
         local isTanking = UnitDetailedThreatSituation("player", frame.displayedUnit);
