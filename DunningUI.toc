@@ -1,8 +1,9 @@
 ## Interface: 80000
-## Title: |cff5CB3FFDunningUI
+## Title: |cff5CB3FFDunning UI
 ## Version: 2.00
 ## Notes: Upgrade basic user interface.
 ## Author: Dunning, azshara horde, Republic of Korea
 ## SavedVariables: DunningVariables
 
 DunningUI.lua
+locales\locales.lua

@@ -30,6 +30,35 @@ function Move(name, p1, parent, p2, x, y)
     end
 end
 
+--Set Locales
+local L = {}    
+	L["잡템 판매결과 : %d 골드, %d 실버, %d 코퍼를 받았습니다."] = "Received %d Gold, %d Silver, %d Copper from sold junk."
+	L["우편을 통해 %d 골드, %d 실버, %d 코퍼를 받았습니다."] = "Received %d Gold, %d Silver, %d Copper from the mail."
+	L["에러 메세지 숨김"] = "Hide error messages"
+	L["전투 메세지 숨김"] = "Hide floating combat text"
+	L["개인 골드 자동수리"] = "Auto player gold repair"
+	L["길드 골드 자동수리"] = "Auto guild gold repair"
+	L["자동 흰색 아이템 판매"] = "Auto sell junk quality items"
+	L["자동 퀘스트 받기"] = "Auto turn in and accept quests"
+	L["빠른 자동 룻"] = "Faster auto loot"
+	L["전투중 마우스 클릭 상호작용 방지"] = "Require right-double-click to loot, attack and interact with objects in combat"
+	L["네임 플레이트"] = "Nameplates"
+	L["미니맵"] = "Minimap"
+	L["채팅"] = "Chat"
+	L["유닛 프레임"] = "Unit frames"
+	L["메인 메뉴 & 액션바"] = "Main menu & Action bar"
+	L["가방과 마이크로 버튼 숨기기"] = "Hide bags and micro buttons"
+	L["더닝 UI"] = "Dunning UI"
+	L["UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색"] = "Focus on UI convenience and light, Tauren druid Dunning at south korea in Azshara horde server, \n Diamond raider team leader, Just googling DunningUI! or twitter @Dunnning1                             "
+	L["옵션 설정"] = "Configuration option"
+	L["인터페이스 사용자설정"] = "Cutomize Interface"
+	L["모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다."] = "Requires a reload for changes to take effect."
+	L["전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다."] = "This means that you can no longer accidentally target or attack a mob when you move the camera."
+	L["일시적으로 시프트 키를 누른효과를 적용합니다"] = "Fasten shift to disable temporarily."
+	L["자동 루팅시 아이템 창을 표시하지 않습니다"] = "This means that the loot window will not be shown during auto loot."
+	L["UI 다시 불러오기"] = "Reload UI"
+	L["더닝 UI가 모든 옵션값을 초기화 했습니다. `/dui`를 타이핑하여 셋팅값을 설정하세요!"] = "Dunning UI has reseted all option values for a update. Check your settings by typing: `/dui`"
+
 --Set Nameplate
 local function SetNameplates()
     if ( not DunningVariables[1] ) then
@@ -679,7 +708,7 @@ local function SetAutoSell()
             gold = floor(abs(totalMoney / 10000));
             silver = floor(abs(mod(totalMoney / 100, 100)));
             copper = floor(abs(mod(totalMoney, 100)));
-            msg = format("잡템 판매결과 : %d 골드, %d 실버, %d 코퍼를 받았습니다.", gold, silver, copper);
+            msg = format(L["잡템 판매결과 : %d 골드, %d 실버, %d 코퍼를 받았습니다."], gold, silver, copper);
             DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 0);
         end
     end
@@ -901,233 +930,6 @@ function Reload_ReloadUI()
 	ReloadUI();
 end
 
---Set Interface Profiler
-local name = "Interface Profiler" --Interface profiler
-local version = "2.0.0"
-local main = CreateFrame("Frame")
-
-local cWhite = "|cffFFFFFF" --color
-local cYellow = "|cffFFFF00"
-local cRed = "|cffFF0000"
-local cGreen = "|cff00FF00"
-local cDefault = cWhite
-
-local prefix = cYellow .. "[" .. name .. "] " .. cDefault --other
-local autoLoad = false
-local characterStr = ""
-
-function Value_Text(txt)
-	local result = ""
-
-	if (txt == true) then
-		result = cGreen .. tostring(txt)
-	elseif (txt == false) then
-		result = cRed .. tostring(txt)
-	else
-		result = cYellow .. txt
-	end
-
-	result = result .. cDefault
-	return result
-end
-
-function Init_Database()
-	if (LediiData_IP == nil) then
-		LediiData_IP = {}
-	end
-	if (LediiData_IP["Main"] == nil) then
-		LediiData_IP["Main"] = {}
-		LediiData_IP["Main"]["AutoLoad"] = false
-	end
-	--print(prefix .. "Database has been loaded.")
-end
-
-function Load_Settings()
-	Init_Database()
-	autoLoad = LediiData_IP["Main"]["AutoLoad"]
-	--print(prefix .. "Settings has been loaded.")
-end
-
-function Data_Reset()
-	LediiData_IP["Main"] = nil
-	Init_Database()
-	print(prefix .. "All data has been reset.")
-end
-
-function Toggle_AutoLoad()
-	autoLoad = not(autoLoad)
-	LediiData_IP["Main"]["AutoLoad"] = autoLoad
-	print(prefix .. "Auto load set to " .. Value_Text(autoLoad) .. ".")
-end
-
-function Save_Interface(profileName)
-	profileName = profileName or "Default"
-
-	-- Init database
-	if (LediiData_IP["Main"][profileName] == nil) then
-		LediiData_IP["Main"][profileName] = {}
-		LediiData_IP["Main"][profileName]["PlayerFrame"] = {}
-		LediiData_IP["Main"][profileName]["TargetFrame"] = {}
-		LediiData_IP["Main"][profileName]["FocusFrame"] = {}
-	end
-
-	-- Store data
-	point, relTo, relPoint, offX, offY = PlayerFrame:GetPoint(1)
-	LediiData_IP["Main"][profileName]["PlayerFrame"]["Point"] = point
-	LediiData_IP["Main"][profileName]["PlayerFrame"]["RelativePoint"] = relPoint
-	LediiData_IP["Main"][profileName]["PlayerFrame"]["OffsetX"] = offX
-	LediiData_IP["Main"][profileName]["PlayerFrame"]["OffsetY"] = offY
-
-	point, relTo, relPoint, offX, offY = TargetFrame:GetPoint(1)
-	LediiData_IP["Main"][profileName]["TargetFrame"]["Point"] = point
-	LediiData_IP["Main"][profileName]["TargetFrame"]["RelativePoint"] = relPoint
-	LediiData_IP["Main"][profileName]["TargetFrame"]["OffsetX"] = offX
-	LediiData_IP["Main"][profileName]["TargetFrame"]["OffsetY"] = offY
-
-	point, relTo, relPoint, offX, offY = FocusFrame:GetPoint(1)
-	LediiData_IP["Main"][profileName]["FocusFrame"]["Point"] = point
-	LediiData_IP["Main"][profileName]["FocusFrame"]["RelativePoint"] = relPoint
-	LediiData_IP["Main"][profileName]["FocusFrame"]["OffsetX"] = offX
-	LediiData_IP["Main"][profileName]["FocusFrame"]["OffsetY"] = offY
-
-	LediiData_IP["Main"][profileName]["Loaded"] = {}
-	LediiData_IP["Main"][profileName]["Loaded"][characterStr] = true
-	print(prefix .. "Interface saved to profile " .. Value_Text(profileName) .. ".")
-end
-
-function Not_Loaded(profileName)
-	profileName = profileName or "Default"
-	local notLoaded = false
-
-	if (LediiData_IP["Main"][profileName]["Loaded"] == nil) then
-		LediiData_IP["Main"][profileName]["Loaded"] = {}
-		LediiData_IP["Main"][profileName]["Loaded"][characterStr] = true
-		notLoaded = true
-	else
-		if (LediiData_IP["Main"][profileName]["Loaded"][characterStr] == nil) then
-			LediiData_IP["Main"][profileName]["Loaded"][characterStr] = true
-			notLoaded = true
-		end
-	end
-
-	return notLoaded
-end
-
-function Load_Interface(profileName)
-	profileName = profileName or "Default"
-
-	if (LediiData_IP["Main"][profileName] ~= nil) then
-		if (Not_Loaded(profileName)) then
-
-			point = LediiData_IP["Main"][profileName]["PlayerFrame"]["Point"]
-			relPoint = LediiData_IP["Main"][profileName]["PlayerFrame"]["RelativePoint"]
-			offX = LediiData_IP["Main"][profileName]["PlayerFrame"]["OffsetX"]
-			offY = LediiData_IP["Main"][profileName]["PlayerFrame"]["OffsetY"]
-			PlayerFrame:ClearAllPoints()
-			PlayerFrame:SetPoint(point, nil, relPoint, offX, offY)
-			PlayerFrame.SetPoint = function() end
-			PlayerFrame:SetUserPlaced(true)
-
-			point = LediiData_IP["Main"][profileName]["TargetFrame"]["Point"]
-			relPoint = LediiData_IP["Main"][profileName]["TargetFrame"]["RelativePoint"]
-			offX = LediiData_IP["Main"][profileName]["TargetFrame"]["OffsetX"]
-			offY = LediiData_IP["Main"][profileName]["TargetFrame"]["OffsetY"]
-			TargetFrame:ClearAllPoints()
-			TargetFrame:SetPoint(point, nil, relPoint, offX, offY)
-			TargetFrame.SetPoint = function() end
-			TargetFrame:SetUserPlaced(true)
-
-			point = LediiData_IP["Main"][profileName]["FocusFrame"]["Point"]
-			relPoint = LediiData_IP["Main"][profileName]["FocusFrame"]["RelativePoint"]
-			offX = LediiData_IP["Main"][profileName]["FocusFrame"]["OffsetX"]
-			offY = LediiData_IP["Main"][profileName]["FocusFrame"]["OffsetY"]
-			FocusFrame:ClearAllPoints()
-			FocusFrame:SetPoint(point, nil, relPoint, offX, offY)
-			FocusFrame.SetPoint = function() end
-			FocusFrame:SetUserPlaced(true)
-
-			print(prefix .. "Interface loaded from profile " .. Value_Text(profileName) .. ".")
-		else
-			--print(prefix .. "Profile " .. Value_Text(profileName) .. " is already loaded.")
-		end
-	else
-		--print(prefix .. "Nothing saved in profile " .. Value_Text(profileName) .. ".")
-	end
-end
-
-function Load_Ledii_Default()
-	local xOff = 400;
-	local y1 = 200;
-	local x2 = 18;
-	local y2 = 300;
-
-	PlayerFrame:ClearAllPoints()
-	PlayerFrame:SetPoint("BOTTOM", -xOff, y1)
-	PlayerFrame.SetPoint = function() end
-	PlayerFrame:SetUserPlaced(true)
-
-	TargetFrame:ClearAllPoints()
-	TargetFrame:SetPoint("BOTTOM", xOff, y1)
-	TargetFrame.SetPoint = function() end
-	TargetFrame:SetUserPlaced(true)
-
-	FocusFrame:ClearAllPoints()
-	FocusFrame:SetPoint("BOTTOM", x2, y2)
-	FocusFrame.SetPoint = function() end
-	FocusFrame:SetUserPlaced(true)
-
-	print(prefix .. "Loaded " .. Value_Text("Ledii's Default") .. " interface.")
-end
-
-function Handle_Events(self, event, ...)
-	-- Player login:
-	if (event == "PLAYER_LOGIN") then
-		print(prefix .. "Version " .. version .. " loaded!")
-		print(prefix .. "Type " .. Value_Text("/ip help") .. " to see a list of commands.")
-		characterStr = GetUnitName("player", true)
-
-		Load_Settings()
-
-		if (autoLoad) then
-			Load_Interface()
-		end
-	end
-end
-
--- Chat commands:
-SLASH_IPROFILER1 = "/ip"
-function SlashCmdList.IPROFILER(msg, editbox)
-	if (msg == "save") then
-		Save_Interface()
-
-	elseif (msg == "load") then
-		Load_Interface()
-
-	elseif (msg == "ledii") then
-		Load_Ledii_Default()
-
-	elseif (msg == "autoload") then
-		Toggle_AutoLoad()
-
-	elseif (msg == "clear") then
-		Data_Reset()
-
-	elseif (msg == "help") then
-		print(prefix .. "List of interface commands:\n"
-		.. Value_Text("/ip save") .. ": Saves the interface to the current profile.\n"
-		.. Value_Text("/ip load") .. ": Loades the interface from the current profile.\n"
-		.. Value_Text("/ip clear") .. ": Clears all stored data. (In case it's needed.)\n"
-		.. Value_Text("/ip setprofile") .. ": Work in progress...\n"
-		.. Value_Text("/ip ledii") .. ": Loades my personal setup if you would like to try that out.\n"
-		.. Value_Text("/ip autoload") .. ": Toggles the autoload function. (Will automaticly load changes for all other characters that use this profile.)\n"
-		)
-	end
-end
-
--- Events to register:
-main:RegisterEvent("PLAYER_LOGIN")
-main:SetScript("OnEvent", Handle_Events)
-
 -- Set Coordinates
 local Coordinates_UpdateInterval = 0.2
 local timeSinceLastUpdate = 0
@@ -1255,116 +1057,18 @@ function Coordinates_UpdateCoordinates()
 	end
 end
 
---SetMisc
-local function SetMisc()
-    -- CastBar
-    CastingBarFrame:SetFrameStrata("FULLSCREEN_DIALOG");
-
-    -- RaidFrames
-    CompactUnitFrameProfilesGeneralOptionsFrameHeightSlider:SetMinMaxValues(16, 72);
-
-    -- TalkingHeadFrame
-    hooksecurefunc("TalkingHead_LoadUI", function()
-            TalkingHeadFrame:EnableMouse(false);
-    end);
-
-    -- PetJournal
-    C_PetJournal.SetPetSortParameter(LE_SORT_BY_RARITY);
-
-    -- Display money received from OpenAllMail
-    local totalmoney = 0;
-    OpenAllMail.ProcessNextItem = function()
-        local _, _, _, _, money, CODAmount, daysLeft, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(OpenAllMail.mailIndex);
-        if ( isGM or (CODAmount and CODAmount > 0) ) then
-            OpenAllMail:AdvanceAndProcessNextItem();
-            return;
-        end
-        if ( money > 0 ) then
-            TakeInboxMoney(OpenAllMail.mailIndex);
-            OpenAllMail.timeUntilNextRetrieval = 0.15;
-            totalmoney = totalmoney + money;
-        elseif ( itemCount and itemCount > 0 ) then
-            TakeInboxItem(OpenAllMail.mailIndex, OpenAllMail.attachmentIndex);
-            OpenAllMail.timeUntilNextRetrieval = 0.15;
-        else
-            OpenAllMail:AdvanceAndProcessNextItem();
-        end
-    end
-    OpenAllMail:SetScript("OnClick", function(self, button, down)
-            totalmoney = 0;
-            OpenAllMail:StartOpening();
-    end);
-    OpenAllMail.StopOpening = function()
-        if ( totalmoney > 0 ) then
-            local gold = floor(abs(totalmoney / 10000));
-            local silver = floor(abs(mod(totalmoney / 100, 100)));
-            local copper = floor(abs(mod(totalmoney, 100)));
-            local msg = format("우편을 통해 %d 골드, %d 실버, %d 코퍼를 받았습니다.", gold, silver, copper);
-            DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 0);
-            totalmoney = 0;
-        end
-        OpenAllMail:Reset();
-        OpenAllMail:Enable();
-        OpenAllMail:SetText(OPEN_ALL_MAIL_BUTTON);
-        OpenAllMail:UnregisterEvent("MAIL_INBOX_UPDATE");
-        OpenAllMail:UnregisterEvent("MAIL_FAILED");
-    end
-
-    -- Close Cinematics without confirmation
-    CinematicFrame:HookScript("OnKeyUp", function(self, key)
-            if ( key == "ESCAPE" ) then
-                if ( CinematicFrame:IsShown() and CinematicFrame.closeDialog and CinematicFrameCloseDialogConfirmButton ) then
-                    CinematicFrameCloseDialogConfirmButton:Click();
-                end
-            end
-    end);
-    MovieFrame:HookScript("OnKeyUp", function(self, key)
-            if ( key == "ESCAPE" ) then
-                if ( MovieFrame:IsShown() and MovieFrame.CloseDialog and MovieFrame.CloseDialog.ConfirmButton ) then
-                    MovieFrame.CloseDialog.ConfirmButton:Click();
-                end
-            end
-    end);
-
-    -- Map Coordinates
-    DunningMapFrame = CreateFrame("Frame", "DunningMapFrame", WorldMapFrame.BorderFrame);
-    DunningMapFrameText = DunningMapFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Outline");
-    DunningMapFrameText:SetPoint("BOTTOM", WorldMapFrame.ScrollContainer, "BOTTOM", 0, 6);
-    local map, x1, y1, x2, y2;
-    local delay = 0;
-    local function DunningMapFrame_OnUpdate(self, elapsed)
-        delay = delay - elapsed;
-        if ( delay > 0 ) then
-            return
-        end
-        delay = 0.05;
-
-        local map = C_Map.GetBestMapForUnit("player");
-        if ( map ) then
-            local pos = C_Map.GetPlayerMapPosition(map, "player");
-            if ( pos ) then
-                x1, y1 = pos:GetXY();
-            end
-        end
-        x2, y2 = WorldMapFrame:GetNormalizedCursorPosition();
-        x1 = x1 or 0;
-        x2 = x2 or 0;
-        y1 = y1 or 0;
-        y2 = y2 or 0;
-        DunningMapFrameText:SetText(format("Player: %.1fx %.1fy   Cursor: %.1fx %.1fy", x1*100, y1*100, x2*100, y2*100));
-    end
-    DunningMapFrame:SetScript("OnUpdate", DunningMapFrame_OnUpdate);
-end
-
 --Set fix unit frame position
-PlayerFrame:SetPoint("TOPLEFT", UIParent,"TOPLEFT", -220,33) -- Set player frame x, y position revised
-PlayerFrame:SetScale(1.0)                                    -- Adjust player frame size rate
+PlayerFrame:ClearAllPoints()     
+PlayerFrame:SetPoint("CENTER", 16, -116) 
+PlayerFrame.SetPoint = function() end     
 
-TargetFrame:SetPoint("TOPLEFT", UIParent,"TOPLEFT", -320,13) --Set target frame position revised
-TargetFrame:SetScale(1.0)                                    --Adjust target frame size rate
+TargetFrame:ClearAllPoints()     
+TargetFrame:SetPoint("CENTER", -209, -42) 
+TargetFrame.SetPoint = function() end     
 
-FocusFrame:SetPoint("TOPLEFT", UIParent,"TOPLEFT", 133,-13)  --Set focus frame position revised
-FocusFrame:SetScale(1.0)                                     --Adjust focus frame size rate
+FocusFrame:ClearAllPoints()     
+FocusFrame:SetPoint("CENTER", 246, 41) 
+FocusFrame.SetPoint = function() end     
 
 --Set ClassColor
 local function colour(statusbar, unit) --Create unitisplayer class color
@@ -1421,6 +1125,107 @@ hooksecurefunc("UnitFrameHealthBar_Update", function (self) --Create unit frame 
 	end
 end);
 
+--SetMisc
+local function SetMisc()
+    -- CastBar
+    CastingBarFrame:SetFrameStrata("FULLSCREEN_DIALOG");
+
+    -- RaidFrames
+    CompactUnitFrameProfilesGeneralOptionsFrameHeightSlider:SetMinMaxValues(16, 72);
+
+    -- TalkingHeadFrame
+    hooksecurefunc("TalkingHead_LoadUI", function()
+            TalkingHeadFrame:EnableMouse(false);
+    end);
+
+    -- PetJournal
+    C_PetJournal.SetPetSortParameter(LE_SORT_BY_RARITY);
+
+    -- Display money received from OpenAllMail
+    local totalmoney = 0;
+    OpenAllMail.ProcessNextItem = function()
+        local _, _, _, _, money, CODAmount, daysLeft, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(OpenAllMail.mailIndex);
+        if ( isGM or (CODAmount and CODAmount > 0) ) then
+            OpenAllMail:AdvanceAndProcessNextItem();
+            return;
+        end
+        if ( money > 0 ) then
+            TakeInboxMoney(OpenAllMail.mailIndex);
+            OpenAllMail.timeUntilNextRetrieval = 0.15;
+            totalmoney = totalmoney + money;
+        elseif ( itemCount and itemCount > 0 ) then
+            TakeInboxItem(OpenAllMail.mailIndex, OpenAllMail.attachmentIndex);
+            OpenAllMail.timeUntilNextRetrieval = 0.15;
+        else
+            OpenAllMail:AdvanceAndProcessNextItem();
+        end
+    end
+    OpenAllMail:SetScript("OnClick", function(self, button, down)
+            totalmoney = 0;
+            OpenAllMail:StartOpening();
+    end);
+    OpenAllMail.StopOpening = function()
+        if ( totalmoney > 0 ) then
+            local gold = floor(abs(totalmoney / 10000));
+            local silver = floor(abs(mod(totalmoney / 100, 100)));
+            local copper = floor(abs(mod(totalmoney, 100)));
+            local msg = format(L["우편을 통해 %d 골드, %d 실버, %d 코퍼를 받았습니다."], gold, silver, copper);
+            DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 0);
+            totalmoney = 0;
+        end
+        OpenAllMail:Reset();
+        OpenAllMail:Enable();
+        OpenAllMail:SetText(OPEN_ALL_MAIL_BUTTON);
+        OpenAllMail:UnregisterEvent("MAIL_INBOX_UPDATE");
+        OpenAllMail:UnregisterEvent("MAIL_FAILED");
+    end
+
+    -- Close Cinematics without confirmation
+    CinematicFrame:HookScript("OnKeyUp", function(self, key)
+            if ( key == "ESCAPE" ) then
+                if ( CinematicFrame:IsShown() and CinematicFrame.closeDialog and CinematicFrameCloseDialogConfirmButton ) then
+                    CinematicFrameCloseDialogConfirmButton:Click();
+                end
+            end
+    end);
+    MovieFrame:HookScript("OnKeyUp", function(self, key)
+            if ( key == "ESCAPE" ) then
+                if ( MovieFrame:IsShown() and MovieFrame.CloseDialog and MovieFrame.CloseDialog.ConfirmButton ) then
+                    MovieFrame.CloseDialog.ConfirmButton:Click();
+                end
+            end
+    end);
+
+    -- Map Coordinates
+    DunningMapFrame = CreateFrame("Frame", "DunningMapFrame", WorldMapFrame.BorderFrame);
+    DunningMapFrameText = DunningMapFrame:CreateFontString(nil, "OVERLAY", "SystemFont_Outline");
+    DunningMapFrameText:SetPoint("BOTTOM", WorldMapFrame.ScrollContainer, "BOTTOM", 0, 6);
+    local map, x1, y1, x2, y2;
+    local delay = 0;
+    local function DunningMapFrame_OnUpdate(self, elapsed)
+        delay = delay - elapsed;
+        if ( delay > 0 ) then
+            return
+        end
+        delay = 0.05;
+
+        local map = C_Map.GetBestMapForUnit("player");
+        if ( map ) then
+            local pos = C_Map.GetPlayerMapPosition(map, "player");
+            if ( pos ) then
+                x1, y1 = pos:GetXY();
+            end
+        end
+        x2, y2 = WorldMapFrame:GetNormalizedCursorPosition();
+        x1 = x1 or 0;
+        x2 = x2 or 0;
+        y1 = y1 or 0;
+        y2 = y2 or 0;
+        DunningMapFrameText:SetText(format("Player: %.1fx %.1fy   Cursor: %.1fx %.1fy", x1*100, y1*100, x2*100, y2*100));
+    end
+    DunningMapFrame:SetScript("OnUpdate", DunningMapFrame_OnUpdate);
+end
+
 --SetOptionsframe
 local function SetOptionsframe()
     CreateFrame("Frame", "DunningVariablesInterface");
@@ -1432,20 +1237,20 @@ local function SetOptionsframe()
     end;
     SLASH_DunningSlash1 = "/dui";
     DunningSettings = {
-        [2] = {x = 24, y = 50+35*1, Text = "에러 메세지 숨김"},
-        [11] = {x = 24, y = 50+35*2, Text = "전투 메세지 숨김"},
-        [3] = {x = 24, y = 50+35*3, Text = "개인 골드 자동수리"},
-        [4] = {x = 174, y = 50+35*3, Text = "길드 골드 자동수리"},
-        [5] = {x = 24, y = 50+35*4, Text = "자동 흰색 아이템 판매"},
-        [8] = {x = 24, y = 50+35*5, Text = "자동 퀘스트 받기"},
-        [9] = {x = 24, y = 60+35*6, Text = "빠른 자동 룻"},
-        [7] = {x = 24, y = 70+35*7, Text = "전투중 마우스 클릭 상호작용 방지"},
-        [1] = {x = 24, y = 130+35*8, Text = "네임 플레이트"},
-        [10] = {x = 174, y = 130+35*8, Text = "미니맵"},
-        [14] = {x = 324, y = 130+35*8, Text = "채팅"},
-        [15] = {x = 24, y = 130+35*9, Text = "유닛 프레임"},
-        [13] = {x = 174, y = 130+35*9, Text = "메인 메뉴 & 액션바"},
-        [12] = {x = 24, y = 130+35*10, Text = "가방과 마이크로 버튼 숨기기"},
+        [2] = {x = 24, y = 50+35*1, Text = L["에러 메세지 숨김"]},
+        [11] = {x = 24, y = 50+35*2, Text = L["전투 메세지 숨김"]},
+        [3] = {x = 24, y = 50+35*3, Text = L["개인 골드 자동수리"]},
+        [4] = {x = 194, y = 50+35*3, Text = L["길드 골드 자동수리"]},
+        [5] = {x = 24, y = 50+35*4, Text = L["자동 흰색 아이템 판매"]},
+        [8] = {x = 24, y = 50+35*5, Text = L["자동 퀘스트 받기"]},
+        [9] = {x = 24, y = 60+35*6, Text = L["빠른 자동 룻"]},
+        [7] = {x = 24, y = 70+35*7, Text = L["전투중 마우스 클릭 상호작용 방지"]},
+        [1] = {x = 24, y = 130+35*8, Text = L["네임 플레이트"]},
+        [10] = {x = 174, y = 130+35*8, Text = L["미니맵"]},
+        [14] = {x = 324, y = 130+35*8, Text = L["채팅"]},
+        [15] = {x = 24, y = 130+35*9, Text = L["유닛 프레임"]},
+        [13] = {x = 174, y = 130+35*9, Text = L["메인 메뉴 & 액션바"]},
+        [12] = {x = 24, y = 130+35*10, Text = L["가방과 마이크로 버튼 숨기기"]},
     };
     local box = {};
     for i = 1, #DunningSettings do
@@ -1483,14 +1288,14 @@ local function SetOptionsframe()
     local text6 = DunningVariablesInterface:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
     local text7 = DunningVariablesInterface:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
     local text8 = DunningVariablesInterface:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
-    text1:SetText("더닝 UI");
-    text2:SetText("UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색");
-    text3:SetText("옵션 설정");
-    text4:SetText("인터페이스 사용자설정");
-    text5:SetText("모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다.");
-    text6:SetText("전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다.");
-    text7:SetText("일시적으로 시프트 키를 누른효과를 적용합니다");
-    text8:SetText("자동 루팅시 아이템 창을 표시하지 않습니다");
+    text1:SetText(L["더닝 UI"]);
+    text2:SetText(L["UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색"]);
+    text3:SetText(L["옵션 설정"]);
+    text4:SetText(L["인터페이스 사용자설정"]);
+    text5:SetText(L["모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다."]);
+    text6:SetText(L["전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다."]);
+    text7:SetText(L["일시적으로 시프트 키를 누른효과를 적용합니다"]);
+    text8:SetText(L["자동 루팅시 아이템 창을 표시하지 않습니다"]);
     text6:SetJustifyH("LEFT");
     text1:SetPoint("TOPLEFT", 16, -16);
     text2:SetPoint("TOPLEFT", text1, "BOTTOMLEFT", 0, -8);
@@ -1502,7 +1307,7 @@ local function SetOptionsframe()
     text8:SetPoint("TOPLEFT", box[9], "BOTTOMLEFT", 40, 2);
     local b = CreateFrame("Button", nil, DunningVariablesInterface, "UIPanelButtonTemplate");
     b:SetSize(100, 22);
-    b:SetText("UI 다시 불러오기");
+    b:SetText(L["UI 다시 불러오기"]);
     b:SetPoint("BOTTOMRIGHT", -16, 16);
     b:SetScript("OnClick", function(self, button, down)
             ReloadUI();
@@ -1612,7 +1417,7 @@ end
 local function LoginEvent(self, event, ...)
     EventWatcher:UnregisterAllEvents();
     if (( not DunningVariables ) or (( DunningVariables ) and ( type(DunningVariables) ~= "table" )) or ( DunningVariables[0] ~= 1.40 )) then
-        print('더닝 UI가 모든 옵션값을 초기화 했습니다. "/dui"를 타이핑하여 셋팅값을 설정하세요!');
+        print(L['더닝 UI가 모든 옵션값을 초기화 했습니다. "/dui"를 타이핑하여 셋팅값을 설정하세요!']);
         DunningVariables = {[0] = 1.40, [1] = 1, [3] = 1, [5] = 1, [8] = 1, [10] = 1, [13] = 1, [14] = 1, [15] = 1,};
     end
     SetNameplates(); -- Can be loaded in combat. Needs to be loaded before the first nameplate is loaded.
