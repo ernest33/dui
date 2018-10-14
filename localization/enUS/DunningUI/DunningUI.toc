@@ -1,7 +1,7 @@
 ## Interface: 80000
 ## Title: |cff5CB3FFDunning UI
 ## Version: 2.00
-## Notes: Upgrade basic user interface.
+## Notes: Upgrade basic user interface.(enUS version)
 ## Author: Dunning, azshara horde, Republic of Korea
 ## SavedVariables: DunningVariables
 

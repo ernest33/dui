@@ -30,6 +30,35 @@ function Move(name, p1, parent, p2, x, y)
     end
 end
 
+--Set Localization for enUS
+local L = {};   
+	L["잡템 판매결과 : %d 골드, %d 실버, %d 코퍼를 받았습니다."] = "Received %d Gold, %d Silver, %d Copper from sold junk."
+	L["우편을 통해 %d 골드, %d 실버, %d 코퍼를 받았습니다."] = "Received %d Gold, %d Silver, %d Copper from the mail."
+	L["에러 메세지 숨김"] = "Hide error messages"
+	L["전투 메세지 숨김"] = "Hide floating combat text"
+	L["개인 골드 자동수리"] = "Auto player gold repair"
+	L["길드 골드 자동수리"] = "Auto guild gold repair"
+	L["자동 흰색 아이템 판매"] = "Auto sell junk quality items"
+	L["자동 퀘스트 받기"] = "Auto turn in and accept quests"
+	L["빠른 자동 룻"] = "Faster auto loot"
+	L["전투중 마우스 클릭 상호작용 방지"] = "Require right-double-click to loot, attack and interact with objects in combat"
+	L["네임 플레이트"] = "Nameplates"
+	L["미니맵"] = "Minimap"
+	L["채팅"] = "Chat"
+	L["유닛 프레임"] = "Unit frames"
+	L["메인 메뉴 & 액션바"] = "Main menu & Action bar"
+	L["가방과 마이크로 버튼 숨기기"] = "Hide bags and micro buttons"
+	L["더닝 UI"] = "Dunning UI"
+	L["UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색"] = "Focus on UI convenience and light, Tauren druid Dunning at south korea in Azshara horde server, \n Diamond raider team leader, Just googling DunningUI! or twitter @Dunnning1                             "
+	L["옵션 설정"] = "Configuration option"
+	L["인터페이스 사용자설정"] = "Cutomize Interface"
+	L["모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다."] = "Requires a reload for changes to take effect."
+	L["전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다."] = "This means that you can no longer accidentally target or attack a mob when you move the camera."
+	L["일시적으로 시프트 키를 누른효과를 적용합니다"] = "Fasten shift to disable temporarily."
+	L["자동 루팅시 아이템 창을 표시하지 않습니다"] = "This means that the loot window will not be shown during auto loot."
+	L["UI 다시 불러오기"] = "Reload UI"
+	L["더닝 UI가 모든 옵션값을 초기화 했습니다. `/dui`를 타이핑하여 셋팅값을 설정하세요!"] = "Dunning UI has reseted all option values for a update. Check your settings by typing: `/dui`"
+	
 --Set Nameplate
 local function SetNameplates()
     if ( not DunningVariables[1] ) then
@@ -679,7 +708,7 @@ local function SetAutoSell()
             gold = floor(abs(totalMoney / 10000));
             silver = floor(abs(mod(totalMoney / 100, 100)));
             copper = floor(abs(mod(totalMoney, 100)));
-            msg = format("잡템 판매결과 : %d 골드, %d 실버, %d 코퍼를 받았습니다.", gold, silver, copper);
+            msg = format(L["잡템 판매결과 : %d 골드, %d 실버, %d 코퍼를 받았습니다."], gold, silver, copper);
             DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 0);
         end
     end
@@ -1028,6 +1057,61 @@ function Coordinates_UpdateCoordinates()
 	end
 end
 
+--Set ClassColor
+local function colour(statusbar, unit) --Create unitisplayer class color
+        local _, class, c
+        if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
+                _, class = UnitClass(unit)
+                c = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+                statusbar:SetStatusBarColor(c.r, c.g, c.b)        end
+end
+hooksecurefunc("UnitFrameHealthBar_Update", colour)
+hooksecurefunc("HealthBar_OnValueChanged", function(self)
+        colour(self, self.unit)
+end)
+local frame = CreateFrame("FRAME")
+frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+frame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+frame:RegisterEvent("UNIT_FACTION")
+local function eventHandler(self, event, ...)
+    if UnitIsPlayer("target") then
+        c = RAID_CLASS_COLORS[select(2, UnitClass("target"))]
+        TargetFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
+    end
+    if UnitIsPlayer("focus") then
+        c = RAID_CLASS_COLORS[select(2, UnitClass("focus"))]
+        FocusFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
+    end
+    if PlayerFrame:IsShown() and not PlayerFrame.bg then
+        c = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
+        bg=PlayerFrame:CreateTexture()
+        bg:SetPoint("TOPLEFT",PlayerFrameBackground)
+        bg:SetPoint("BOTTOMRIGHT",PlayerFrameBackground,0,22)
+        bg:SetTexture(TargetFrameNameBackground:GetTexture())
+        bg:SetVertexColor(c.r,c.g,c.b)
+        PlayerFrame.bg=true
+    end
+end
+frame:SetScript("OnEvent", eventHandler)
+hooksecurefunc("HealthBar_OnValueChanged", function (self) --Create healthBar class color
+	if UnitIsPlayer(self.unit) then
+		local c = RAID_CLASS_COLORS[select(2,UnitClass(self.unit))];
+		if c then
+			self:SetStatusBarColor(c.r, c.g, c.b)
+		end
+	end
+end);
+
+hooksecurefunc("UnitFrameHealthBar_Update", function (self) --Create unit frame health bar class color
+	if UnitIsPlayer(self.unit) then
+		local c = RAID_CLASS_COLORS[select(2,UnitClass(self.unit))];
+		if c then
+			self:SetStatusBarColor(c.r, c.g, c.b)
+		end
+	end
+end);
+
 --SetMisc
 local function SetMisc()
     -- CastBar
@@ -1072,7 +1156,7 @@ local function SetMisc()
             local gold = floor(abs(totalmoney / 10000));
             local silver = floor(abs(mod(totalmoney / 100, 100)));
             local copper = floor(abs(mod(totalmoney, 100)));
-            local msg = format("우편을 통해 %d 골드, %d 실버, %d 코퍼를 받았습니다.", gold, silver, copper);
+            local msg = format(L["우편을 통해 %d 골드, %d 실버, %d 코퍼를 받았습니다."], gold, silver, copper);
             DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 0);
             totalmoney = 0;
         end
@@ -1129,61 +1213,6 @@ local function SetMisc()
     DunningMapFrame:SetScript("OnUpdate", DunningMapFrame_OnUpdate);
 end
 
---Set ClassColor
-local function colour(statusbar, unit) --Create unitisplayer class color
-        local _, class, c
-        if UnitIsPlayer(unit) and UnitIsConnected(unit) and unit == statusbar.unit and UnitClass(unit) then
-                _, class = UnitClass(unit)
-                c = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
-                statusbar:SetStatusBarColor(c.r, c.g, c.b)        end
-end
-hooksecurefunc("UnitFrameHealthBar_Update", colour)
-hooksecurefunc("HealthBar_OnValueChanged", function(self)
-        colour(self, self.unit)
-end)
-local frame = CreateFrame("FRAME")
-frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-frame:RegisterEvent("PLAYER_TARGET_CHANGED")
-frame:RegisterEvent("PLAYER_FOCUS_CHANGED")
-frame:RegisterEvent("UNIT_FACTION")
-local function eventHandler(self, event, ...)
-    if UnitIsPlayer("target") then
-        c = RAID_CLASS_COLORS[select(2, UnitClass("target"))]
-        TargetFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
-    end
-    if UnitIsPlayer("focus") then
-        c = RAID_CLASS_COLORS[select(2, UnitClass("focus"))]
-        FocusFrameNameBackground:SetVertexColor(c.r, c.g, c.b)
-    end
-    if PlayerFrame:IsShown() and not PlayerFrame.bg then
-        c = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
-        bg=PlayerFrame:CreateTexture()
-        bg:SetPoint("TOPLEFT",PlayerFrameBackground)
-        bg:SetPoint("BOTTOMRIGHT",PlayerFrameBackground,0,22)
-        bg:SetTexture(TargetFrameNameBackground:GetTexture())
-        bg:SetVertexColor(c.r,c.g,c.b)
-        PlayerFrame.bg=true
-    end
-end
-frame:SetScript("OnEvent", eventHandler)
-hooksecurefunc("HealthBar_OnValueChanged", function (self) --Create healthBar class color
-	if UnitIsPlayer(self.unit) then
-		local c = RAID_CLASS_COLORS[select(2,UnitClass(self.unit))];
-		if c then
-			self:SetStatusBarColor(c.r, c.g, c.b)
-		end
-	end
-end);
-
-hooksecurefunc("UnitFrameHealthBar_Update", function (self) --Create unit frame health bar class color
-	if UnitIsPlayer(self.unit) then
-		local c = RAID_CLASS_COLORS[select(2,UnitClass(self.unit))];
-		if c then
-			self:SetStatusBarColor(c.r, c.g, c.b)
-		end
-	end
-end);
-
 --SetOptionsframe
 local function SetOptionsframe()
     CreateFrame("Frame", "DunningVariablesInterface");
@@ -1195,20 +1224,20 @@ local function SetOptionsframe()
     end;
     SLASH_DunningSlash1 = "/dui";
     DunningSettings = {
-        [2] = {x = 24, y = 50+35*1, Text = "에러 메세지 숨김"},
-        [11] = {x = 24, y = 50+35*2, Text = "전투 메세지 숨김"},
-        [3] = {x = 24, y = 50+35*3, Text = "개인 골드 자동수리"},
-        [4] = {x = 174, y = 50+35*3, Text = "길드 골드 자동수리"},
-        [5] = {x = 24, y = 50+35*4, Text = "자동 흰색 아이템 판매"},
-        [8] = {x = 24, y = 50+35*5, Text = "자동 퀘스트 받기"},
-        [9] = {x = 24, y = 60+35*6, Text = "빠른 자동 룻"},
-        [7] = {x = 24, y = 70+35*7, Text = "전투중 마우스 클릭 상호작용 방지"},
-        [1] = {x = 24, y = 130+35*8, Text = "네임 플레이트"},
-        [10] = {x = 174, y = 130+35*8, Text = "미니맵"},
-        [14] = {x = 324, y = 130+35*8, Text = "채팅"},
-        [15] = {x = 24, y = 130+35*9, Text = "유닛 프레임"},
-        [13] = {x = 174, y = 130+35*9, Text = "메인 메뉴 & 액션바"},
-        [12] = {x = 24, y = 130+35*10, Text = "가방과 마이크로 버튼 숨기기"},
+        [2] = {x = 24, y = 50+35*1, Text = L["에러 메세지 숨김"]},
+        [11] = {x = 24, y = 50+35*2, Text = L["전투 메세지 숨김"]},
+        [3] = {x = 24, y = 50+35*3, Text = L["개인 골드 자동수리"]},
+        [4] = {x = 194, y = 50+35*3, Text = L["길드 골드 자동수리"]},
+        [5] = {x = 24, y = 50+35*4, Text = L["자동 흰색 아이템 판매"]},
+        [8] = {x = 24, y = 50+35*5, Text = L["자동 퀘스트 받기"]},
+        [9] = {x = 24, y = 60+35*6, Text = L["빠른 자동 룻"]},
+        [7] = {x = 24, y = 70+35*7, Text = L["전투중 마우스 클릭 상호작용 방지"]},
+        [1] = {x = 24, y = 130+35*8, Text = L["네임 플레이트"]},
+        [10] = {x = 174, y = 130+35*8, Text = L["미니맵"]},
+        [14] = {x = 324, y = 130+35*8, Text = L["채팅"]},
+        [15] = {x = 24, y = 130+35*9, Text = L["유닛 프레임"]},
+        [13] = {x = 174, y = 130+35*9, Text = L["메인 메뉴 & 액션바"]},
+        [12] = {x = 24, y = 130+35*10, Text = L["가방과 마이크로 버튼 숨기기"]},
     };
     local box = {};
     for i = 1, #DunningSettings do
@@ -1246,14 +1275,14 @@ local function SetOptionsframe()
     local text6 = DunningVariablesInterface:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
     local text7 = DunningVariablesInterface:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
     local text8 = DunningVariablesInterface:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
-    text1:SetText("더닝 UI");
-    text2:SetText("UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색");
-    text3:SetText("옵션 설정");
-    text4:SetText("인터페이스 사용자설정");
-    text5:SetText("모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다.");
-    text6:SetText("전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다.");
-    text7:SetText("일시적으로 시프트 키를 누른효과를 적용합니다");
-    text8:SetText("자동 루팅시 아이템 창을 표시하지 않습니다");
+    text1:SetText(L["더닝 UI"]);
+    text2:SetText(L["UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색"]);
+    text3:SetText(L["옵션 설정"]);
+    text4:SetText(L["인터페이스 사용자설정"]);
+    text5:SetText(L["모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다."]);
+    text6:SetText(L["전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다."]);
+    text7:SetText(L["일시적으로 시프트 키를 누른효과를 적용합니다"]);
+    text8:SetText(L["자동 루팅시 아이템 창을 표시하지 않습니다"]);
     text6:SetJustifyH("LEFT");
     text1:SetPoint("TOPLEFT", 16, -16);
     text2:SetPoint("TOPLEFT", text1, "BOTTOMLEFT", 0, -8);
@@ -1265,7 +1294,7 @@ local function SetOptionsframe()
     text8:SetPoint("TOPLEFT", box[9], "BOTTOMLEFT", 40, 2);
     local b = CreateFrame("Button", nil, DunningVariablesInterface, "UIPanelButtonTemplate");
     b:SetSize(100, 22);
-    b:SetText("UI 다시 불러오기");
+    b:SetText(L["UI 다시 불러오기"]);
     b:SetPoint("BOTTOMRIGHT", -16, 16);
     b:SetScript("OnClick", function(self, button, down)
             ReloadUI();
@@ -1375,7 +1404,7 @@ end
 local function LoginEvent(self, event, ...)
     EventWatcher:UnregisterAllEvents();
     if (( not DunningVariables ) or (( DunningVariables ) and ( type(DunningVariables) ~= "table" )) or ( DunningVariables[0] ~= 1.40 )) then
-        print('더닝 UI가 모든 옵션값을 초기화 했습니다. "/dui"를 타이핑하여 셋팅값을 설정하세요!');
+        print(L['더닝 UI가 모든 옵션값을 초기화 했습니다. "/dui"를 타이핑하여 셋팅값을 설정하세요!']);
         DunningVariables = {[0] = 1.40, [1] = 1, [3] = 1, [5] = 1, [8] = 1, [10] = 1, [13] = 1, [14] = 1, [15] = 1,};
     end
     SetNameplates(); -- Can be loaded in combat. Needs to be loaded before the first nameplate is loaded.
