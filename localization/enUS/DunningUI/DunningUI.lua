@@ -49,11 +49,11 @@ local L = {};
 	L["메인 메뉴 & 액션바"] = "Main menu & Action bar"
 	L["가방과 마이크로 버튼 숨기기"] = "Hide bags and micro buttons"
 	L["더닝 UI"] = "Dunning UI"
-	L["UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색"] = "Focus on UI convenience and light, Tauren druid Dunning at south korea in Azshara horde server, \n Diamond raider team leader, Just googling DunningUI! or twitter @Dunnning1                             "
+	L["UI의 편의성과 가벼움에 중점을 두고 제작,아즈샤라 서버 타우렌 호드 더닝,Diamond raider team 공대장,구귿에서 더닝UI 검색"] = "Focus on UI convenience and light, Tauren druid Dunning at south korea in Azshara horde server, \n   Diamond raider team leader, Just googling DunningUI! or twitter @Dunnning1                             "
 	L["옵션 설정"] = "Configuration option"
 	L["인터페이스 사용자설정"] = "Cutomize Interface"
 	L["모든 설정의 원활한 적용을 위해 UI 다시 불러오기 필요합니다."] = "Requires a reload for changes to take effect."
-	L["전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다."] = "This means that you can no longer accidentally target or attack a mob when you move the camera."
+	L["전투중 룻을하거나, 대상선택을 잘못하거나, 카메라 시점 전환시 타켓 전환 방지를 합니다."] = "This means you can no longer accidentally target or attack a mob when you move the camera."
 	L["일시적으로 시프트 키를 누른효과를 적용합니다"] = "Fasten shift to disable temporarily."
 	L["자동 루팅시 아이템 창을 표시하지 않습니다"] = "This means that the loot window will not be shown during auto loot."
 	L["UI 다시 불러오기"] = "Reload UI"
@@ -1404,7 +1404,7 @@ end
 local function LoginEvent(self, event, ...)
     EventWatcher:UnregisterAllEvents();
     if (( not DunningVariables ) or (( DunningVariables ) and ( type(DunningVariables) ~= "table" )) or ( DunningVariables[0] ~= 1.40 )) then
-        print(L['더닝 UI가 모든 옵션값을 초기화 했습니다. "/dui"를 타이핑하여 셋팅값을 설정하세요!']);
+        print(L['DunningUI has reseted all options for update. Check your settings by typing: "/dui".']);
         DunningVariables = {[0] = 1.40, [1] = 1, [3] = 1, [5] = 1, [8] = 1, [10] = 1, [13] = 1, [14] = 1, [15] = 1,};
     end
     SetNameplates(); -- Can be loaded in combat. Needs to be loaded before the first nameplate is loaded.
