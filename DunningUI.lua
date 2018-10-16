@@ -119,7 +119,7 @@ local function SetMainMenu()
         end
     end
     for _, name in pairs({MainMenuBarVehicleLeaveButton, PossessBarFrame, StanceBarFrame, MultiCastActionBarFrame, PetActionBarFrame}) do
-        name:SetScale(0.7);
+        name:SetScale(0.8); --MicroActionbar scale
     end
     MainMenuBarVehicleLeaveButton:SetSize(36, 36);
     MainMenuBarBackpackButton:GetNormalTexture():SetPoint("TOPLEFT", MainMenuBarBackpackButton, "TOPLEFT", -12, 12);
